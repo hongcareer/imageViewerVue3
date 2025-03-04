@@ -1,0 +1,32 @@
+{
+  "name": "img-viewer-vue3",
+  "version": "1.2.7",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "better-scroll": "^2.5.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "img-viewer-vue3": "^1.2.2",
+    "less": "^4.2.0",
+    "terser": "^5.28.1",
+    "vite": "^5.1.4"
+  },
+  "keywords": [
+    "img-viewer-vue3",
+    "img-viewer",
+    "vue3",
+    "vue",
+    "图片查看器"
+  ],
+  "author": "zhaohong",
+  "description": "一个基于Vue3的图片查看器组件"
+}
