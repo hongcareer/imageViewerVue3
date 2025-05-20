@@ -17,7 +17,7 @@ npm install input-template-vue3
 ```js
 // 引入组件样式
 import "input-template-vue3/style.css";
-import InputTemplate from "input-template-vue3/index.umd.js";
+import { InputTemplate } from "input-template-vue3/index.umd.js";
 
 const app = createApp(App);
 app.use(InputTemplate); // 全局注册
