@@ -1,6 +1,6 @@
 {
-  "name": "img-viewer-vue3",
-  "version": "1.2.9",
+  "name": "input-template-vue3",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,25 +8,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "better-scroll": "^2.5.1"
+    "better-scroll": "^2.5.1",
+    "image-viewer-vue": "^2.0.6",
+    "input-template-vue3": "^0.0.1"
   },
   "peerDependencies": {
     "vue": "^3.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "img-viewer-vue3": "^1.2.2",
-    "less": "^4.2.0",
     "terser": "^5.28.1",
     "vite": "^5.1.4"
   },
   "keywords": [
-    "img-viewer-vue3",
-    "img-viewer",
+    "input-template-vue3",
+    "input-template",
     "vue3",
     "vue",
-    "图片查看器"
+    "模板输入框"
   ],
   "author": "zhaohong",
-  "description": "一个基于Vue3的图片查看器组件"
+  "description": "一个基于Vue3的模板输入框组件"
 }

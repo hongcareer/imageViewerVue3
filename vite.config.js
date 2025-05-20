@@ -13,7 +13,7 @@ export default defineConfig({
 			
 			files.forEach(file => {
 				const sourcePath = path.resolve(__dirname, file);
-				const outputPath = path.resolve(__dirname, `image-viewer-vue/${file}`);
+				const outputPath = path.resolve(__dirname, `input-template-vue3/${file}`);
 				
 				if (fs.existsSync(sourcePath)) {
 					fs.copyFileSync(sourcePath, outputPath);
@@ -25,16 +25,16 @@ export default defineConfig({
 		}
 	}],
 	build: {
-		outDir: "image-viewer-vue", //输出文件名称
+		outDir: "input-template-vue3", //输出文件名称，与 README 中的包名保持一致
 		lib: {
-			entry: path.resolve(__dirname, "./src/components/muk-ui/index.js"), //指定组件编译入口文件
-			name: "image-viewer-vue",
-			fileName: (format) => `index.${format}.js`, // 修改这里，生成不同格式的文件
+			entry: path.resolve(__dirname, "./src/components/muk-ui/InputTemplate/index.vue"), //指定组件编译入口文件
+			name: "input-template-vue3", // 修改库名称与 README 一致
+			fileName: (format) => `index.${format}.js`, // 生成不同格式的文件
 			formats: ["umd", "es", "cjs"],
 		}, //库编译模式配置
 		rollupOptions: {
 			// 确保外部化处理那些你不想打包进库的依赖
-			// external: ["vue"],
+			external: ["vue"], // 将 Vue 设为外部依赖，避免重复打包
 			output: {
 				// 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
 				globals: {
