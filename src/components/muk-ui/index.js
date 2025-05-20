@@ -45,7 +45,7 @@ import ActiveInputTemplate from "./ActiveInputTemplate/index.vue";
 // };
 
 // 按需引入
-export default ActiveInputTemplate;
+export { ActiveInputTemplate };
 
 // const component = [InputTemplate];
 

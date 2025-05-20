@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted, nextTick } from 'vue'
 
 const props = defineProps({
   elements: {
@@ -631,17 +631,35 @@ const removeWrapperWithHistory = (wrapper, isForward = false) => {
 }
 const initialText = ref('')
 function getInitialText() {
+  // 确保 editor.value 存在
+  if (!editor.value) {
+    console.warn('Editor element not found');
+    return;
+  }
+
   let initialContent = ''
   props.elements.forEach(el => {
     const elementHtml = createElementHtml(el)
     initialContent += elementHtml + ' '
   })
-  editor.value.innerHTML = initialContent
-  // 初始化后立即提取文本并触发change事件
-  initialText.value = extractTextFromHtml(initialContent)
+  
+  // 使用 nextTick 确保 DOM 已经更新
+  nextTick(() => {
+    if (editor.value) {
+      editor.value.innerHTML = initialContent
+      // 初始化后立即提取文本并触发change事件
+      initialText.value = extractTextFromHtml(initialContent)
+    }
+  })
 }
 // 修改onMounted钩子
 onMounted(() => {
+  // 确保 editor.value 存在
+  if (!editor.value) {
+    console.warn('Editor element not found');
+    return;
+  }
+
   if (props.showTemplate) {
     getInitialText()
   }

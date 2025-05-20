@@ -1,6 +1,6 @@
-# InputTemplate 组件
+# ActiveInputTemplate 组件
 
-一个灵活的 Vue3 模板输入组件，支持多种输入类型。
+一个灵活的 Vue3 模板输入组件，纯js+css实现，支持多种输入类型。
 
 ## 安装
 
@@ -17,10 +17,12 @@ npm install input-template-vue3
 ```js
 // 引入组件样式
 import "input-template-vue3/style.css";
-import { InputTemplate } from "input-template-vue3/index.umd.js";
+import { ActiveInputTemplate } from "input-template-vue3/index.umd.js";
+// 或者
+import { ActiveInputTemplate } from "node_modules/input-template-vue3/index.umd.js";
 
 const app = createApp(App);
-app.use(InputTemplate); // 全局注册
+app.use(ActiveInputTemplate); // 全局注册
 ```
 
 ### 方法二：局部引入
@@ -28,7 +30,10 @@ app.use(InputTemplate); // 全局注册
 在需要使用的组件中引入：
 
 ```js
-import { InputTemplate } from "input-template-vue3/index.umd.js";
+import { ActiveInputTemplate } from "input-template-vue3/index.umd.js";
+// 或者
+import { ActiveInputTemplate } from "node_modules/input-template-vue3/index.umd.js";
+
 import "input-template-vue3/style.css"; // 引入组件样式
 ```
 
@@ -89,7 +94,7 @@ const templateInputRef = ref(null);
 <template>
   <button @click="handleClear">清空</button>
   <div class="container">
-    <InputTemplate 
+    <ActiveInputTemplate 
       :elements="templateElements" 
       :showTemplate="true" 
       @submit="handleSubmit" 
@@ -165,4 +170,5 @@ const templateInputRef = ref(null);
   type: 'plaintext',
   value: '这是一段纯文本内容',
 }
+
 ```
