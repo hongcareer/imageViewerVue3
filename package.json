@@ -1,6 +1,6 @@
 {
   "name": "input-template-vue3",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",
-    "input-template-vue3": "^0.0.11",
+    "input-template-vue3": "^0.0.12",
     "terser": "^5.28.1",
     "vite": "^4.5.2"
   },
