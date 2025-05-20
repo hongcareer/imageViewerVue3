@@ -21,6 +21,7 @@
     <img src="../icon/l-c.png" @click.stop="handleChangeIndex('r')" v-show="ImgList[0] && imgIndex!=ImgList.length-1" class="img-l"/>
 	</div>
   <div :class="['right', layout == 'h'?'active':'']">
+    <span @click="close">点击关闭</span>
     <div :class="['toolbar', layout == 'h'?'active':'']">
       <div v-for="(tool,index) in toolBar" class="tool-wrapper" :key="index">
         <img :src="tool.icon" alt="" @click="tool.func(tool.type)"/>
@@ -48,6 +49,7 @@ import BScroll from 'better-scroll'
 import IR from '../icon/img-rotate.png'
 import IN from '../icon/img-zoomin.png'
 import IO from '../icon/img-zoomout.png'
+const emit = defineEmits(['close'])
 /*
 	ImgList:图片列表
 */ 
@@ -339,6 +341,9 @@ function onTouchEnd(evt) {
 };
 function handleScale(scale,event) {
   event.target.style.scale = scale
+}
+function close() {
+  emit('close', 'close')
 }
 </script>
 <script>

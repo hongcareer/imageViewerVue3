@@ -3,41 +3,48 @@ import ImgViewer from "./ImgViewer/index.vue";
 
 // 创建函数式调用方法
 const $imgViewer = (options = {}) => {
-	// 创建一个DOM容器
-	const container = document.createElement('div');
-	document.body.appendChild(container);
-	
-	// 创建ImgViewer实例
-	const app = createApp({
-		render() {
-			return h(ImgViewer, {
-				ImgList: options.imgList || [],
-				index: options.index || 0,
-				toolInfo: options.toolInfo || {
-					layoutChange: true,
-					layout: 'v',
-					fullTool: [],
-					clickFunc: () => {}
-				},
-				onClose: () => {
-					// 关闭时销毁实例
-					app.unmount();
-					container.remove();
-				}
-			});
-		}
-	});
-	
-	// 挂载实例
-	app.mount(container);
-	
-	// 返回一个对象，包含关闭方法
-	return {
-		close: () => {
+	return new Promise((resolve) => {
+		// 创建一个DOM容器
+		const container = document.createElement('div');
+		document.body.appendChild(container);
+		
+		// 创建ImgViewer实例
+		const app = createApp({
+			render() {
+				return h(ImgViewer, {
+					ImgList: options.imgList || [],
+					index: options.index || 0,
+					toolInfo: options.toolInfo || {
+						layoutChange: true,
+						layout: 'v',
+						fullTool: [],
+						clickFunc: () => {}
+					},
+					onClose: (result) => {
+						console.log(result, 'resultresultresult ');
+						// 关闭时销毁实例
+						app.unmount();
+						container.remove();
+						// 解析Promise，返回结果
+						resolve(result);
+					}
+				});
+			}
+		});
+		
+		// 挂载实例
+		app.mount(container);
+		
+		// 将close方法添加到Promise上
+		const close = (result) => {
 			app.unmount();
 			container.remove();
-		}
-	};
+			resolve(result);
+		};
+		
+		// 将close方法挂载到Promise上，方便外部调用
+		Promise.prototype.close = close;
+	});
 };
 
 // 按需引入
