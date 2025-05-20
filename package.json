@@ -8,9 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "better-scroll": "^2.5.1",
-    "image-viewer-vue": "^2.0.6",
-    "input-template-vue3": "^0.0.1"
+    "input-template-vue3": "^0.0.2"
   },
   "peerDependencies": {
     "vue": "^3.2.0"

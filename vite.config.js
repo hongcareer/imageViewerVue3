@@ -27,7 +27,7 @@ export default defineConfig({
 	build: {
 		outDir: "input-template-vue3", //输出文件名称，与 README 中的包名保持一致
 		lib: {
-			entry: path.resolve(__dirname, "./src/components/muk-ui/InputTemplate/index.vue"), //指定组件编译入口文件
+			entry: path.resolve(__dirname, "./src/components/muk-ui/index.js"), //指定组件编译入口文件
 			name: "input-template-vue3", // 修改库名称与 README 一致
 			fileName: (format) => `index.${format}.js`, // 生成不同格式的文件
 			formats: ["umd", "es", "cjs"],
