@@ -942,7 +942,7 @@ document.head.appendChild(style);
 
 <script>
 export default {
-	name: "InputTemplate",
+	name: "ActiveInputTemplate",
 };
 </script>
 <style scoped>

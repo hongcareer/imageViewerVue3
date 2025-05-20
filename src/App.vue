@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { InputTemplate } from "input-template-vue3/index.umd.js";
-import "input-template-vue3/style.css"; // 引入组件样式
-// import {InputTemplate} from "./components/muk-ui/index.js";
+// import { InputTemplate } from "input-template-vue3/index.umd.js";
+// import "input-template-vue3/style.css"; // 引入组件样式
+import { ActiveInputTemplate } from "./components/muk-ui/index.js";
 // import {$inputTemplate} from "./components/muk-ui/index.js";
 const templateElements = [
   {
@@ -117,7 +117,7 @@ const handleClear = () => {
 <template>
   <button @click="handleClear">清空</button>
   <div class="app">
-    <InputTemplate :elements="templateElements" :showTemplate="true" @submit="handleSubmit" 
+    <ActiveInputTemplate :elements="templateElements" :showTemplate="true" @submit="handleSubmit" 
     ref="templateInputRef"/>
   </div>
 </template>

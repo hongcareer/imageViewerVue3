@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 /node_modules
 .specstory
-
+/input-template-vue3
+/input-template-vue3
