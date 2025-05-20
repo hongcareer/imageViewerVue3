@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue"
 import { InputTemplate } from "input-template-vue3/index.umd.js";
 import "input-template-vue3/style.css"; // 引入组件样式
+// import {InputTemplate} from "./components/muk-ui/index.js";
+// import {$inputTemplate} from "./components/muk-ui/index.js";
 const templateElements = [
   {
     id: '7',
@@ -90,11 +92,26 @@ const handleSubmit = (value) => {
   const templateInputValue = templateInputRef.value.initialText
   console.log(templateInputValue)
 }
-const handleClear = () => {
-  templateInputRef.value.initialText = ''
-  templateInputRef.value.clearInput();
-}
 const templateInputRef = ref(null)
+let inputTemplateInstance = null
+
+onMounted(() => {
+  // inputTemplateInstance = $inputTemplate({
+  //   elements: templateElements,
+  //   showTemplate: true,
+  //   submit: handleSubmit,
+  //   ref: (el) => {
+  //     templateInputRef.value = el
+  //   }
+  // })
+})
+
+const handleClear = () => {
+  if (templateInputRef.value) {
+    templateInputRef.value.initialText = ''
+    templateInputRef.value.clearInput()
+  }
+}
 </script>
 
 <template>

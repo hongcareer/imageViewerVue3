@@ -7,6 +7,8 @@ const $inputTemplate = (options = {}) => {
 	const container = document.createElement('div');
 	document.body.appendChild(container);
 	
+	let componentInstance = null;
+	
 	// 创建ImgViewer实例
 	const app = createApp({
 		render() {
@@ -14,6 +16,12 @@ const $inputTemplate = (options = {}) => {
 				elements: options.elements || [],
 				showTemplate: options.showTemplate || false,
 				submit: options.submit,
+				ref: (el) => {
+					componentInstance = el;
+					if (options.ref && typeof options.ref === 'function') {
+						options.ref(el);
+					}
+				},
 				onClose: () => {
 					// 关闭时销毁实例
 					app.unmount();
@@ -26,12 +34,13 @@ const $inputTemplate = (options = {}) => {
 	// 挂载实例
 	app.mount(container);
 	
-	// 返回一个对象，包含关闭方法
+	// 返回一个对象，包含关闭方法和组件实例
 	return {
 		close: () => {
 			app.unmount();
 			container.remove();
-		}
+		},
+		instance: componentInstance
 	};
 };
 
