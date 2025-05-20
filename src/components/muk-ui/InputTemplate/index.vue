@@ -940,6 +940,11 @@ style.textContent = `
 document.head.appendChild(style);
 </script>
 
+<script>
+export default {
+	name: "InputTemplate",
+};
+</script>
 <style scoped>
 /* 编辑器基础样式 */
 .rich-editor {
