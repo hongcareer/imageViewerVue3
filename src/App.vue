@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import { InputTemplate } from "../node_modules/input-template-vue3/index.umd.js";
+import { InputTemplate } from "input-template-vue3/index.umd.js";
 import "input-template-vue3/style.css"; // 引入组件样式
 const templateElements = [
   {
