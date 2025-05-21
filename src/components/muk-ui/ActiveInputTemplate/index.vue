@@ -201,7 +201,7 @@ const handleKeydown = (e) => {
       // 检查是否会删除最后一个字符
       const willBeEmpty = (e.key === 'Backspace' && 
                           (editableDiv.textContent.length === 1 || 
-                           (range.startOffset === 1 && range.startOffset === range.endOffset))) ||
+                           (range.startOffset === 1 && range.startOffset === range.endOffset && startNode.textContent.length === 1))) ||
                          (e.key === 'Delete' && 
                           (editableDiv.textContent.length === 1 || 
                            (range.startOffset === 0 && range.startOffset === range.endOffset && 
@@ -226,6 +226,36 @@ const handleKeydown = (e) => {
         
         // 触发内容变化
         handleChange(editor.value.innerHTML);
+        return;
+      }
+      
+      // 增强修复：检查是否在文本节点中按 Backspace，并且不是在文本开头
+      if (e.key === 'Backspace' && 
+          startNode.nodeType === Node.TEXT_NODE && 
+          startOffset > 0 && 
+          startOffset <= startNode.textContent.length) {
+        
+        // 阻止默认行为
+        e.preventDefault();
+        
+        // 手动删除一个字符
+        const text = startNode.textContent;
+        const newText = text.substring(0, startOffset - 1) + text.substring(startOffset);
+        startNode.textContent = newText;
+        
+        // 设置光标位置
+        const newRange = document.createRange();
+        newRange.setStart(startNode, startOffset - 1);
+        newRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
+        
+        // 确保 editable-div 保持焦点
+        editableDiv.focus();
+        
+        // 触发内容变化
+        handleChange(editor.value.innerHTML);
+        
         return;
       }
       
