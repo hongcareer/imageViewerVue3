@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue"
 // import  {ActiveInputTemplate}  from "input-template-vue3/index.umd.js";
 import { ActiveInputTemplate }  from "./components/muk-ui/index.js";
-// import "input-template-vue3/style.css"; // 引入组件样式
+import "input-template-vue3/style.css"; // 引入组件样式
 // import { ActiveInputTemplate }  from "./components/muk-ui/index.js";
 // import {$inputTemplate} from "./components/muk-ui/index.js";
 const templateElements = [

@@ -15,7 +15,7 @@ npm install input-template-vue3
 在 main.js 中引入：
 
 ```js
-// 引入组件样式
+// 引入组件样式 umd或者es都可
 import "input-template-vue3/style.css";
 import { ActiveInputTemplate } from "input-template-vue3/index.umd.js";
 // 或者
