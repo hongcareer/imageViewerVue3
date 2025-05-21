@@ -170,5 +170,6 @@ const templateInputRef = ref(null);
   type: 'plaintext',
   value: '这是一段纯文本内容',
 }
-
 ```
+
+![演示图片](image.png)
