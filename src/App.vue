@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import  {ActiveInputTemplate}  from "../node_modules/input-template-vue3/index.es.js";
-// import { ActiveInputTemplate }  from "./components/muk-ui/index.js";
-import "input-template-vue3/style.css"; // 引入组件样式
+// import  {ActiveInputTemplate}  from "input-template-vue3/index.es.js";
+import { ActiveInputTemplate }  from "./components/muk-ui/index.js";
+// import "input-template-vue3/style.css"; // 引入组件样式
 // import { ActiveInputTemplate }  from "./components/muk-ui/index.js";
 // import {$inputTemplate} from "./components/muk-ui/index.js";
 const templateElements = [
@@ -56,7 +56,7 @@ const templateElements = [
   }, {
     id: '53',
     type: 'text',
-    value: '哈哈啊哈111',
+    value: '哈哈哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111哈哈啊哈111啊哈111',
     placeholder: '请输入文本'
   },
   {

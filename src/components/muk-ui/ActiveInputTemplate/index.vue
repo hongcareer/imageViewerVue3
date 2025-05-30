@@ -1181,7 +1181,7 @@ export default {
   align-items: center;
   gap: 4px;
   border-radius: 6px;
-  background: rgba(0, 115, 229, 0.04);
+  background: rgba(0, 115, 229, 0.07);
   margin-bottom: 4px;
 }
 :deep(.select-wrapper){
@@ -1191,7 +1191,7 @@ export default {
   align-items: center;
   gap: 4px;
   border-radius: 6px;
-  background: rgba(0, 115, 229, 0.04);
+  background: rgba(0, 115, 229, 0.07);
   margin-bottom: 4px;
 }
 
@@ -1229,7 +1229,7 @@ export default {
   align-items: center;
   gap: 4px;
   border-radius: 6px;
-  background: rgba(0, 115, 229, 0.04);
+  background: rgba(0, 115, 229, 0.07);
 }
 
 :deep(.editable-div.showing-placeholder) {
