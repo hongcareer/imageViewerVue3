@@ -49,7 +49,7 @@ export default defineConfig({
 	},
 	server: {
 		host: 'localhost',
-		port: 3000, // 你可以根据需要修改端口号
+		port: 3006, // 你可以根据需要修改端口号
 		open: true, // 自动打开浏览器，可选
 	}
 });

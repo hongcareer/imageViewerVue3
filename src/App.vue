@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue"
-// import "./components/muk-ui/index.js"
+import {ImgViewer}  from "./components/muk-ui/index.js"
 // import { $imgViewer } from "img-viewer-vue3";
 function onSend(callback) {
   console.log(callback);
@@ -27,20 +27,20 @@ function seeImg(src) {
   // console.log(src);
 }
 console.log(window);
-onMounted(() => {
-  $imgViewer({
-    imgList: ImgList.value,
-    index: 0,
-    toolInfo: toolInfo.value
-  })
-})
+// onMounted(() => {
+//   $imgViewer({
+//     imgList: ImgList.value,
+//     index: 0,
+//     toolInfo: toolInfo.value
+//   })
+// })
 </script>
 
 <template>
   <div>
     <button>发送</button>
   </div>
-  <!-- <ImgViewer :ImgList="ImgList" :toolInfo="toolInfo"/> -->
+  <ImgViewer :ImgList="ImgList" :toolInfo="toolInfo"/>
 </template>
 
 <style scoped></style>
