@@ -1,7 +1,15 @@
 {
   "name": "img-viewer-vue3",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "type": "module",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

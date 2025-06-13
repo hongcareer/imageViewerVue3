@@ -53,14 +53,19 @@ import IO from '../icon/img-zoomout.svg'
 const props = defineProps({
 	ImgList: {
 		type: Array,
-		default: [],
+		default: () => [],
 	},
   index: {
     type: Number,
     default: 0
   },
   toolInfo: {
-    type: Object
+    type: Object,
+    default: () => ({
+      layoutChange: true,
+      fullTool: [],
+      clickFunc: () => {}
+    })
   }
 });
 let flag =
@@ -85,9 +90,11 @@ const toolself = [
   },
 ]
 const toolBar = computed(() => [...toolself,...fullTool.value])
+const isReady = ref(false)
 const ImgRef = ref(null)
 const SmallImgRef = ref(null)
 const scrollContainer = ref(null)
+const ImgWrapper = ref(null)
 const isDragging = ref(false)
 const startX = ref(0)
 const startY = ref(0)
@@ -96,11 +103,39 @@ const scrollTop = ref(0)
 const width = ref(document.documentElement.clientWidth)
 const height = ref(document.documentElement.clientHeight)
 
+// 初始化函数
+const initialize = async () => {
+  await nextTick()
+  if (!ImgRef.value || !SmallImgRef.value || !scrollContainer.value || !ImgWrapper.value) {
+    console.warn('ImgViewer: 组件初始化失败，某些必要的DOM元素未找到')
+    return
+  }
+  initScroll()
+  isReady.value = true
+}
+
 onMounted(async () => {
+  await initialize()
+  window.addEventListener('resize', handleResize)
+})
+
+// 监听图片列表变化
+watch(() => props.ImgList, async () => {
+  await initialize()
+}, { deep: true })
+
+// 监听索引变化
+watch(() => props.index, async () => {
+  if (isReady.value) {
     await nextTick()
-    initScroll()
-    // 监听窗口大小变化
-    window.addEventListener('resize', handleResize)
+    scrollToCurrentImage()
+  }
+})
+
+// 组件卸载时清理
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  isReady.value = false
 })
 
 // 处理窗口大小变化
@@ -108,11 +143,6 @@ function handleResize() {
     width.value = document.documentElement.clientWidth
     height.value = document.documentElement.clientHeight
 }
-
-// 组件卸载时移除事件监听
-onUnmounted(() => {
-    window.removeEventListener('resize', handleResize)
-})
 
 function initScroll() {
     if (!scrollContainer.value) return
@@ -310,59 +340,63 @@ function update(target, compareLowerValue, compareUuperValue,type,number) {
 // PC端缩放、拖拽
 const scale = ref(1) 
 function handleMouseWheel(event) {
-  event.preventDefault(); // 防止默认行为发生（页面滚动）
-  const delta = Math.sign(-event.deltaY); // 获取滚轮滚动的方向
-  scale.value += (0.1 * delta); // 每次滚动按比例调整比例值
+  if (!isReady.value || !ImgRef.value) return
+  event.preventDefault()
+  const delta = Math.sign(-event.deltaY)
+  scale.value += (0.1 * delta)
   if (scale.value <= 0.1 || scale.value >= 10) {
-    // 限制比例值在合理范围内
-    scale.value = Math.max(Math.min(scale.value, 10), 0.1);
+    scale.value = Math.max(Math.min(scale.value, 10), 0.1)
   }
-  event.target.style.scale = scale.value
+  ImgRef.value.style.scale = scale.value
 }
 function onMouseWheel(type) {
-    if (type == 'in') {
-      scale.value += 0.1
-    } else {
-      scale.value -= 0.1
-    }
+  if (!isReady.value || !ImgRef.value) return
+  if (type == 'in') {
+    scale.value += 0.1
+  } else {
+    scale.value -= 0.1
+  }
   if (scale.value <= 0.1 || scale.value >= 10) {
-    // 限制比例值在合理范围内
-    scale.value = Math.max(Math.min(scale.value, 10), 0.1);
+    scale.value = Math.max(Math.min(scale.value, 10), 0.1)
   }
   ImgRef.value.style.scale = scale.value
 }
 let rotateDeg = 0
-function handleRotate () {
-  rotateDeg+=90
+function handleRotate() {
+  if (!isReady.value || !ImgRef.value) return
+  rotateDeg += 90
   ImgRef.value.style.rotate = `${rotateDeg}deg`
 }
-const ImgWrapper = ref(null)
 let startPosX = 0;
 let startPosY = 0;
-function moveImg (e) {
+function moveImg(e) {
+  if (!isReady.value || !ImgWrapper.value) return
   let img = e.target
   let x = e.pageX - img.offsetLeft
   let y = e.pageY - img.offsetTop
-  // 判断是点击事件还是拖拽事件
-  isDragging.value = false;
-  startPosX = e.clientX;
-  startPosY = e.clientY;
+  isDragging.value = false
+  startPosX = e.clientX
+  startPosY = e.clientY
   ImgWrapper.value.addEventListener('mousemove', move)
+  
   function move(e) {
+    if (!isReady.value) return
     if (Math.abs(e.clientX - startPosX) > 10 || Math.abs(e.clientY - startPosY) > 10) {
-      isDragging.value = true;
+      isDragging.value = true
       img.style.left = e.pageX - x + 'px'
       img.style.top = e.pageY - y + 'px'
     } else {
-      isDragging.value = false;
+      isDragging.value = false
     }
   }
-  // 添加鼠标抬起事件，鼠标抬起，将事件移除
+  
   window.addEventListener('mouseup', (e) => {
-    if (!isDragging.value) {
+    if (!isDragging.value && props.toolInfo.clickFunc) {
       props.toolInfo.clickFunc(e.target.currentSrc)
     }
-    ImgWrapper.value.removeEventListener('mousemove', move)
+    if (ImgWrapper.value) {
+      ImgWrapper.value.removeEventListener('mousemove', move)
+    }
   })
 }
 
