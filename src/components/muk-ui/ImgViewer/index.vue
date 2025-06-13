@@ -1,4 +1,3 @@
-
 <template>
 <div :class="['container', layout == 'h'?'active':'']">
   <div :class="['horv', layout == 'h'?'active':'']" @click="changeLayout" 
@@ -26,11 +25,12 @@
         <img :src="tool.icon" alt="" @click="tool.func(tool.type)"/>
       </div>
     </div>
-    <div :class="['small-list',layout == 'h'?'active':'']" v-if="props.ImgList.length > 1">
+    <div :class="['small-list',layout == 'h'?'active':'']" v-if="props.ImgList.length > 1" ref="scrollContainer">
       <div :class="['img-list',layout == 'h' ? 'active' : '']" 
         :style="{
           width: layout == 'h' ? 82*ImgList.length + 18 + 'px':'',
           height: layout == 'v' ? 82*ImgList.length + 18 + 'px':''}"
+        
       >
         <img :src="img" v-for="(img,index) in ImgList" @click="changeImg(index)" 
           :class="{active: layout == 'h',imgA: index == imgIndex}"
@@ -43,8 +43,7 @@
 </div>
 </template>
 <script setup>
-import { ref, onMounted, nextTick, watch,computed } from "vue"
-import BScroll from 'better-scroll'
+import { ref, onMounted, nextTick, watch,computed, onUnmounted } from "vue"
 import IR from '../icon/img-rotate.svg'
 import IN from '../icon/img-zoomin.svg'
 import IO from '../icon/img-zoomout.svg'
@@ -88,106 +87,224 @@ const toolself = [
 const toolBar = computed(() => [...toolself,...fullTool.value])
 const ImgRef = ref(null)
 const SmallImgRef = ref(null)
-const BS2 = ref();
+const scrollContainer = ref(null)
+const isDragging = ref(false)
+const startX = ref(0)
+const startY = ref(0)
+const scrollLeft = ref(0)
+const scrollTop = ref(0)
+const width = ref(document.documentElement.clientWidth)
+const height = ref(document.documentElement.clientHeight)
+
 onMounted(async () => {
     await nextTick()
-    onBScroll();
+    initScroll()
+    // 监听窗口大小变化
+    window.addEventListener('resize', handleResize)
 })
-const onBScroll = () => {
-  if (layout.value == 'h') {
-    BS2.value = new BScroll('.small-list', {
-      scrollX: true,
-      eventPassthrough: "vertical",
-      probeType: 3,
-    })
-  } else {
-    BS2.value = new BScroll('.small-list', {
-      scrollY: true,
-      probeType: 3,
-    })
-  }
-    BS2.value.on('scroll', (position) => {
-        // console.log(position);
-    })
-    BS2.value.refresh()
+
+// 处理窗口大小变化
+function handleResize() {
+    width.value = document.documentElement.clientWidth
+    height.value = document.documentElement.clientHeight
 }
+
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+})
+
+function initScroll() {
+    if (!scrollContainer.value) return
+    
+    // 确保容器可以滚动
+    scrollContainer.value.style.overflow = layout.value === 'h' ? 'auto' : 'auto'
+    scrollContainer.value.style.scrollBehavior = 'smooth'
+    
+    scrollContainer.value.addEventListener('mousedown', handleMouseDown)
+    scrollContainer.value.addEventListener('touchstart', handleTouchStart)
+}
+
+function handleMouseDown(e) {
+    isDragging.value = true
+    startX.value = e.pageX - scrollContainer.value.offsetLeft
+    startY.value = e.pageY - scrollContainer.value.offsetTop
+    scrollLeft.value = scrollContainer.value.scrollLeft
+    scrollTop.value = scrollContainer.value.scrollTop
+    
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+}
+
+function handleTouchStart(e) {
+    isDragging.value = true
+    startX.value = e.touches[0].pageX - scrollContainer.value.offsetLeft
+    startY.value = e.touches[0].pageY - scrollContainer.value.offsetTop
+    scrollLeft.value = scrollContainer.value.scrollLeft
+    scrollTop.value = scrollContainer.value.scrollTop
+    
+    document.addEventListener('touchmove', handleTouchMove)
+    document.addEventListener('touchend', handleTouchEnd)
+}
+
+function handleMouseMove(e) {
+    if (!isDragging.value) return
+    e.preventDefault()
+    
+    const x = e.pageX - scrollContainer.value.offsetLeft
+    const y = e.pageY - scrollContainer.value.offsetTop
+    const walkX = (x - startX.value)
+    const walkY = (y - startY.value)
+    
+    if (layout.value === 'h') {
+        scrollContainer.value.scrollLeft = scrollLeft.value - walkX
+    } else {
+        scrollContainer.value.scrollTop = scrollTop.value - walkY
+    }
+}
+
+function handleTouchMove(e) {
+    if (!isDragging.value) return
+    e.preventDefault()
+    
+    const x = e.touches[0].pageX - scrollContainer.value.offsetLeft
+    const y = e.touches[0].pageY - scrollContainer.value.offsetTop
+    const walkX = (x - startX.value)
+    const walkY = (y - startY.value)
+    
+    if (layout.value === 'h') {
+        scrollContainer.value.scrollLeft = scrollLeft.value - walkX
+    } else {
+        scrollContainer.value.scrollTop = scrollTop.value - walkY
+    }
+}
+
+function handleMouseUp() {
+    isDragging.value = false
+    document.removeEventListener('mousemove', handleMouseMove)
+    document.removeEventListener('mouseup', handleMouseUp)
+}
+
+function handleTouchEnd() {
+    isDragging.value = false
+    document.removeEventListener('touchmove', handleTouchMove)
+    document.removeEventListener('touchend', handleTouchEnd)
+}
+
+async function changeLayout() {
+    if (layout.value === 'h') {
+        layout.value = 'v'
+    } else {
+        layout.value = 'h'
+    }
+    await nextTick()
+    // 重新初始化滚动
+    initScroll()
+    scrollToCurrentImage()
+}
+
 let allHeightB = 0
 let allHeightR = 0
 const imgIndex = ref(props.index)
-function changeImg (index) {
-  console.dir(SmallImgRef.value[0]);
+function changeImg(index) {
   imgIndex.value = index
+  scrollToCurrentImage()
 }
-async function changeLayout () {
-  BS2.value.refresh()
-  if (layout.value == 'h') layout.value = 'v'
-  else layout.value = 'h'
-  BS2.value.scrollTo(0, 0, 300)
-  await nextTick()
-  onBScroll()
-}
-const height = document.documentElement.clientHeight
-const width = document.documentElement.clientWidth
-function handleChangeIndex (type) {  
+function handleChangeIndex(type) {  
   if (type == 'r') {
     if (imgIndex.value >= props.ImgList.length-1) {
       imgIndex.value = props.ImgList.length-1
       return 
     }
     imgIndex.value += 1
-    if (layout.value == 'v') {
-      bottom()
-    } else {
-      right()
-    }
+    scrollToCurrentImage()
   } else if (type == 'l') {
     if (imgIndex.value <= 0) {
       imgIndex.value = 0
       return
     }
     imgIndex.value -= 1
-    if (layout.value == 'v') {
-      top()
-    } else {
-      left()
-    }
+    scrollToCurrentImage()
   }
-  
 }
+
+// 滚动到当前图片
+function scrollToCurrentImage() {
+  if (!scrollContainer.value || !SmallImgRef.value) return
+
+  nextTick(() => {
+    const currentImg = SmallImgRef.value[imgIndex.value]
+    if (!currentImg) return
+
+    const container = scrollContainer.value
+    const containerRect = container.getBoundingClientRect()
+    const imgRect = currentImg.getBoundingClientRect()
+
+    if (layout.value === 'h') {
+      const containerWidth = containerRect.width
+      const imgWidth = imgRect.width
+      const imgLeft = currentImg.offsetLeft
+      const maxScroll = container.scrollWidth - containerWidth
+      let targetScrollLeft = imgLeft - (containerWidth - imgWidth) / 2
+      targetScrollLeft = Math.max(0, Math.min(targetScrollLeft, maxScroll))
+      container.scrollLeft = targetScrollLeft
+    } else {
+      const containerHeight = containerRect.height
+      const imgHeight = imgRect.height
+      const imgTop = currentImg.offsetTop
+      const maxScroll = container.scrollHeight - containerHeight
+      let targetScrollTop = imgTop - (containerHeight - imgHeight) / 2
+      targetScrollTop = Math.max(0, Math.min(targetScrollTop, maxScroll))
+      container.scrollTop = targetScrollTop
+    }
+  })
+}
+
+// 监听 imgIndex 变化
+watch(imgIndex, () => {
+  nextTick(() => {
+    scrollToCurrentImage()
+  })
+})
+
+// 监听 layout 变化
+watch(layout, () => {
+  nextTick(() => {
+    scrollToCurrentImage()
+  })
+})
+
 function bottom () {
   let pos = update(SmallImgRef.value[imgIndex.value],10,height-10,'bottom','top')
   if (pos[0] === 'lower') {
-    BS2.value.scrollTo(0, height-SmallImgRef.value[imgIndex.value].offsetTop-100, 300)
+    scrollContainer.value.scrollTop = height-SmallImgRef.value[imgIndex.value].offsetTop-100
   } else if (pos[0] === 'upper' || pos[2] < 92) {
-    BS2.value.scrollTo(0, -SmallImgRef.value[imgIndex.value].offsetTop + 28, 300)
+    scrollContainer.value.scrollTop = -SmallImgRef.value[imgIndex.value].offsetTop + 28
   }
 }
 function top () {
   let pos = update(SmallImgRef.value[imgIndex.value],10,height-10,'top')
-  // console.log(pos);
   if (pos[0] === 'upper') {
-    BS2.value.scrollTo(0, -SmallImgRef.value[imgIndex.value].offsetTop, 300)
+    scrollContainer.value.scrollTop = -SmallImgRef.value[imgIndex.value].offsetTop
   }
 }
 function right () {
   let pos = update(SmallImgRef.value[imgIndex.value],0,width-40,'right','left')
-  // console.log(pos);
   if (pos[0] === 'lower') {
-    BS2.value.scrollTo(width - SmallImgRef.value[imgIndex.value].offsetLeft - 110, 0, 300)
+    scrollContainer.value.scrollTo(width - SmallImgRef.value[imgIndex.value].offsetLeft - 110, 0)
   } else if (pos[0] === 'upper' || pos[2] < 92 ) {
-    BS2.value.scrollTo(-SmallImgRef.value[imgIndex.value].offsetLeft + 28, 0, 300)
+    scrollContainer.value.scrollTo(-SmallImgRef.value[imgIndex.value].offsetLeft + 28, 0)
   }
 }
 function left () {
   let pos = update(SmallImgRef.value[imgIndex.value],10,width-10,'left')
   if (pos[0] === 'upper') {
-    BS2.value.scrollTo(-SmallImgRef.value[imgIndex.value].offsetLeft, 0, 300)
+    scrollContainer.value.scrollTo(-SmallImgRef.value[imgIndex.value].offsetLeft)
   }
 }
 // 判断元素所在屏幕位置：屏幕上-'upper', 屏幕中-'in', 屏幕下-'lower'
 function update(target, compareLowerValue, compareUuperValue,type,number) {
   const rect = target.getBoundingClientRect();
-  // console.log(rect);
   return [rect[type]<compareLowerValue?'upper':rect[type] < compareUuperValue?'in':'lower',rect[type],rect[number]]
 }
 // PC端缩放、拖拽
@@ -203,18 +320,15 @@ function handleMouseWheel(event) {
   event.target.style.scale = scale.value
 }
 function onMouseWheel(type) {
-  // console.log(type);
     if (type == 'in') {
       scale.value += 0.1
     } else {
       scale.value -= 0.1
     }
-    // console.log(type,scale.value);
   if (scale.value <= 0.1 || scale.value >= 10) {
     // 限制比例值在合理范围内
     scale.value = Math.max(Math.min(scale.value, 10), 0.1);
   }
-  // console.log(scale.value);
   ImgRef.value.style.scale = scale.value
 }
 let rotateDeg = 0
@@ -223,7 +337,6 @@ function handleRotate () {
   ImgRef.value.style.rotate = `${rotateDeg}deg`
 }
 const ImgWrapper = ref(null)
-let isDragging = false;
 let startPosX = 0;
 let startPosY = 0;
 function moveImg (e) {
@@ -231,24 +344,22 @@ function moveImg (e) {
   let x = e.pageX - img.offsetLeft
   let y = e.pageY - img.offsetTop
   // 判断是点击事件还是拖拽事件
-  isDragging = false;
+  isDragging.value = false;
   startPosX = e.clientX;
   startPosY = e.clientY;
   ImgWrapper.value.addEventListener('mousemove', move)
   function move(e) {
-    // console.log(e.target);
     if (Math.abs(e.clientX - startPosX) > 10 || Math.abs(e.clientY - startPosY) > 10) {
-      isDragging = true;
+      isDragging.value = true;
       img.style.left = e.pageX - x + 'px'
       img.style.top = e.pageY - y + 'px'
     } else {
-      isDragging = false;
+      isDragging.value = false;
     }
   }
   // 添加鼠标抬起事件，鼠标抬起，将事件移除
   window.addEventListener('mouseup', (e) => {
-    // console.log('mouseUp');
-    if (!isDragging) {
+    if (!isDragging.value) {
       props.toolInfo.clickFunc(e.target.currentSrc)
     }
     ImgWrapper.value.removeEventListener('mousemove', move)
@@ -264,13 +375,12 @@ const startMY = ref(0)
 const touchLength = ref(1)
 //记录触屏触点坐标 记录起始和结束点
 function onTouchStart(evt) {
-  // console.log(evt.touches);
   targetDom.value = evt.target
   touchLength.value = evt.touches.length
   if (touchLength.value == 1) {
     startMX.value = evt.changedTouches[0].clientX - targetDom.value.offsetLeft;
     startMY.value = evt.changedTouches[0].clientY - targetDom.value.offsetTop
-    isDragging = false;
+    isDragging.value = false;
     startPosX = evt.changedTouches[0].clientX;
     startPosY = evt.changedTouches[0].clientX;
   } else {
@@ -295,13 +405,13 @@ function onTouchMove(evt) {
     let xnum = evt.changedTouches[0].clientX
     let ynum = evt.changedTouches[0].clientY
     if (Math.abs(xnum- startPosX) > 10 || Math.abs(ynum - startPosY) > 10) {
-      isDragging = true
+      isDragging.value = true
       const deltaX = xnum - startMX.value;
       const deltaY = ynum - startMY.value;
       targetDom.value.style.left = deltaX + 'px'
       targetDom.value.style.top = deltaY + 'px'
     } else {
-      isDragging = false
+      isDragging.value = false
     }    
   } else {
     if (touchState === null) {
@@ -485,12 +595,13 @@ div{
     }
   }
   .small-list {
-    width:100%;
+    width: 100%;
     user-select: none;
     overflow: hidden;
-    // width: 80px;
+    position: relative;
     &.active {
       width: 100%;
+      height: 100px;
     }
     .img-list {
       display: flex;
@@ -498,21 +609,30 @@ div{
       flex-direction: column;
       align-items: center;
       cursor: grab;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      height: 100%;
       &.active {
         width: 100%;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
         flex-direction: row;
-        height: 90px;
+        height: 100%;
+      }
+      &::-webkit-scrollbar {
+        display: none;
       }
       img {
         height: 72px;
-        width:72px;
+        width: 72px;
         object-fit: cover;
-        flex-shrink:0;
+        flex-shrink: 0;
         margin-bottom: 10px;
-        cursor: grab;
+        cursor: pointer;
         border-radius: 2px;
-        -webkit-user-drag:none;
+        -webkit-user-drag: none;
         transition: all 300ms;
         &.active {
           margin-right: 10px;
