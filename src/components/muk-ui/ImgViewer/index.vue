@@ -364,6 +364,7 @@ function onMouseWheel(type) {
 let rotateDeg = 0
 function handleRotate() {
   if (!isReady.value || !ImgRef.value) return
+  console.log(ImgRef.value,isReady.value,"isReady.value")
   rotateDeg += 90
   ImgRef.value.style.rotate = `${rotateDeg}deg`
 }
