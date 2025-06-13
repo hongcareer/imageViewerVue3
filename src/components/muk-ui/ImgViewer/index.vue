@@ -45,9 +45,9 @@
 <script setup>
 import { ref, onMounted, nextTick, watch,computed } from "vue"
 import BScroll from 'better-scroll'
-import IR from '../icon/img-rotate.png'
-import IN from '../icon/img-zoomin.png'
-import IO from '../icon/img-zoomout.png'
+import IR from '../icon/img-rotate.svg'
+import IN from '../icon/img-zoomin.svg'
+import IO from '../icon/img-zoomout.svg'
 /*
 	ImgList:图片列表
 */ 
@@ -358,15 +358,16 @@ div{
   
 }
 .container {
-  position: fixed;
+  position: relative;
   top:0px;
   left:0px;
-  width:100vw;
-  height: 100vh;
+  width:100%;
+  height: 100%;
   overflow: hidden;
   display:flex;
   padding: 10px 20px;
-  background: rgba(0,0,0,1);
+  background: transparent;
+  
   &.active{
     flex-direction: column;
   }
@@ -456,6 +457,9 @@ div{
       top: 50%;
       left: -50px;
       transform: translateY(-50%);
+      border: 1px solid #E7E9EF;
+      padding: 10px 14px;
+      border-radius: 100px;
       &.active{
         display: flex;
         height: auto;
@@ -469,9 +473,12 @@ div{
       .tool-wrapper {
         display: flex;
         align-items: center;
-        padding:2px 5px;
+        margin-right: 20px;
+        &:last-child {
+          margin-right: 0px;
+        }
         img {
-          width:26px;
+          width:20px;
           cursor: pointer;
         }
       }
@@ -518,6 +525,11 @@ div{
         }
       }
     }
+  }
+  .img-l{
+    border-radius: 50%;
+    box-shadow: 0 0 2px #e3e0e0;
+    background: #f5f5f5;
   }
 </style>
 
