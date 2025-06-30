@@ -7,6 +7,7 @@
     @click="handleClick"
     @keydown="handleKeydown"
     @keydown.enter="handleEnter"
+    @paste="handlePaste"
     :data-placeholder="'即刻开启创作之旅！输入需求，例如：我想要一篇[宣传文案]，主题为[智能手表]，面向[年轻群体]，风格[小红书风格]。涵盖[产品设计]、[健康监测功能]等要点。更多优质模板，点击下方即可挑选'"
   ></div>
 </template>
@@ -986,6 +987,36 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// 添加粘贴处理函数
+const handlePaste = (e) => {
+  e.preventDefault();
+  
+  // 获取剪贴板中的纯文本
+  const text = e.clipboardData.getData('text/plain');
+  
+  if (text) {
+    // 获取当前选区
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      
+      // 删除选中的内容
+      range.deleteContents();
+      
+      // 插入纯文本
+      range.insertNode(document.createTextNode(text));
+      
+      // 移动光标到插入文本的末尾
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      
+      // 触发内容变化
+      handleChange(editor.value.innerHTML);
+    }
+  }
+};
 </script>
 
 <script>
