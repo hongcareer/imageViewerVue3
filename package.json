@@ -1,6 +1,6 @@
 {
   "name": "input-template-vue3",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "type": "module",
   "main": "./index.cjs.js",
   "module": "./index.es.js",
