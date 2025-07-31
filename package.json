@@ -8,10 +8,12 @@
     ".": {
       "import": "./index.es.js",
       "require": "./index.cjs.js"
-    }
+    },
+    "./style.css": "./style.css"
   },
   "files": [
     "index.*.js",
+    "style.css",
     "README.md"
   ],
   "scripts": {

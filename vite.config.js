@@ -32,6 +32,7 @@ export default defineConfig({
 			fileName: (format) => `index.${format}.js`, // 生成不同格式的文件
 			formats: ["umd", "es", "cjs"],
 		}, //库编译模式配置
+		cssCodeSplit: false, // 将样式内联到 JavaScript 中
 		rollupOptions: {
 			// 确保外部化处理那些你不想打包进库的依赖
 			external: ["vue"], // 将 Vue 设为外部依赖，避免重复打包
