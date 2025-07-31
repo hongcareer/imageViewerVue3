@@ -2,6 +2,18 @@
   "name": "input-template-vue3",
   "version": "0.0.18",
   "type": "module",
+  "main": "./index.cjs.js",
+  "module": "./index.es.js",
+  "exports": {
+    ".": {
+      "import": "./index.es.js",
+      "require": "./index.cjs.js"
+    }
+  },
+  "files": [
+    "index.*.js",
+    "README.md"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
